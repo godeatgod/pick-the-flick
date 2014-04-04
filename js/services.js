@@ -1,6 +1,6 @@
 var angular = require("angularjs");
 
-var API = "http://localhost:3000/";
+var API = "http://staging.duckygo:3000/";
 
 var http;
 var q;
@@ -23,6 +23,10 @@ function ApiService($http, $q, $rootScope) {
     rootScope = $rootScope;
 }
 ApiService.prototype = {
+
+    login:function() {
+	return getJson(API + "api/login");
+    },
     
     user:function() {
 	return getJson(API + "api/user");
@@ -51,12 +55,12 @@ ApiService.prototype = {
     },
 
     movie:function(id) {
-	return getJson(API + "http://www.omdbapi.com/?i=tt" + id);
+	return getJson(API + "api/movie/" + id);
     },
 
 
     suggest:function(title) {
-	return getJson(API + "http://www.omdbapi.com/?s=" + title);
+	return getJson(API + "api/suggest/" + title);
     },
 
     answer:function(id, answer) {
