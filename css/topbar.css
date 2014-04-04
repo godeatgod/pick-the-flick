@@ -1,0 +1,17 @@
+.top-bar {
+    height: 30px;
+    width: 100%;
+    background: #0f0f0f;
+    color: #ffffff;    
+}
+
+
+.user-identity {
+    font-size: 25px;
+    color: #ef00ef;
+}
+
+.user-points {
+    margin-left: 80%;
+}
+

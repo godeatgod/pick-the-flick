@@ -1,0 +1,21 @@
+.category-list {
+    width: 80%;
+}
+
+.category-thumb {
+    width: 100px;
+    height: 100px;
+
+    border: 1px solid #000000;
+    text-align:center;
+}
+
+.category-image {
+    width: 100px;
+    height: 100px;
+}
+
+.category-description {
+    position:relative;
+    top: -30px;
+}

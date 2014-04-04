@@ -1,0 +1,69 @@
+<html ng-app="PickTheFlick">
+  <head>
+    <title>Pick The Flick</title>
+    <link rel="stylesheet" href="css/bundle.css" />
+    <script type="text/javascript" src="js/bundle.js"></script>
+  </head>
+
+  <body ng-controller="GameController">
+    <div class="top-bar" ng-controller="UserController">
+      Welcome 
+      <span class="user-identity">{{ user.name }}</span>
+      <span class="user-points">{{ user.points }} points</span>
+    </div>
+
+    <div class="flick-input" ng-hide="selectedFlick" ng-controller="FlickController">
+      <h2> Suggest a movie description </h2>
+      <auto-complete result="flick.answer" />
+      <input type="text" class="movie-description" ng-show="flick.answer" 
+	     ng-model="flick.description"/>
+      <input type="button" class="movie-submit" ng-show="flick.answer" 
+	     ng-click="submitRiddle()" value="Submit a movie"/>
+    </div>
+
+    <div class="flick-play" ng-show="selectedFlick" ng-controller="FlickController">
+      <span class="tutorial"> Try to guess the name of the movie described by the following sentence </span>
+      <div class="flick-description">{{ selectedFlick.description }}</div>
+      <div class="flick-input">
+	<auto-complete result="answer" />
+	<input type="button" class="movie-submit" ng-show="answer"
+	       ng-click="submitAnswer()" value="Submit answer"/>
+
+	<input type="button" class="movie-cancel" ng-click="cancelAnswer()" 
+	       value="Cancel" />
+      </div>
+
+      <div class="rejected-flick-list" ng-show="flick.rejected">
+	<div class="rejected-flick" ng-repeat="movie in flick.rejected">
+	  <img src="{{ getFacebookImage(movie.sender) }}" class="rejected-sender" />
+	  <img src="{{ getPoster(movie.id) }}" class="rejected-poster" />
+	</div>
+      </div>
+    </div>
+
+
+    <div class="flicks" ng-hide="flick">
+      <h2>{{ category.name }}</h2>
+      <div class="flick-list">
+	<div ng-repeat="flick in category.flicks" 
+	     class="flick-thumb" ng-click="selectFlick()" >
+	
+	  <img class="flick-image" src="{{ flick.img }}" />
+	  <span class="flick-description">{{ flick.description }}</span>
+	</div>
+      </div>
+    </div>
+
+    <h2>Categories</h2>
+    <div class="category-list" ng-controller="CategoryController">
+      <div ng-repeat="category in categoryList" class="category-thumb" 
+	   ng-click="selectCategory()" >
+	
+	<img class="category-image" src="{{ category.img }}" />
+	<span class="category-description">{{ category.name }}</span>
+      </div>
+    </div>
+
+
+  </body>
+</html>
