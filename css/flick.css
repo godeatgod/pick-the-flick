@@ -1,0 +1,10 @@
+.flicks {
+    width: 100%;
+    border: 2px solid #0f0f0f;
+}
+
+.flick-suggestion-poster {
+    width:100px;
+    height:100px;
+    float: left;
+}

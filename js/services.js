@@ -1,26 +1,38 @@
 var angular = require("angularjs");
 
-var API = "http://staging.duckygo:3000/";
+var API = "http://staging.duckygo.com:3000/";
 
 var http;
 var q;
-var rootScope;
+var timeout;
+var token;
+var headers;
+
 
 function getJson(url, data) {
     var d = q.defer();
-    var h = data === undefined  ? http.get(url) : http.post(url, data) ;
+    var h = data === undefined  ? http.get(url, headers) : http.post(url, data, headers) ;
     h.success(function(data) {
-		d.resolve(data);
+	timeout(function() {
+	    d.resolve(data);
+	});
     });
 
     return d.promise;
 }
 
 
-function ApiService($http, $q, $rootScope) {
+function ApiService($http, $q, $location, $timeout) {
+    token = $location.search().token;
+    if (token === undefined) {
+	window.location = API + "auth/facebook";
+    }
+
+    timeout = $timeout;
+
+    headers = {headers: {'Authorization': 'Bearer ' + token}};
     http = $http;
     q = $q;
-    rootScope = $rootScope;
 }
 ApiService.prototype = {
 
@@ -67,7 +79,7 @@ ApiService.prototype = {
 	var correct_cb;
 	var wrong_cb;
 
-	http.get(API + "api/answer/" + id + "/" + answer)
+	http.get(API + "api/answer/" + id + "/" + answer, headers)
 	    .success(function(data) {
 		data = angular.fromJson(data);
 		if (data.correct) {
@@ -77,20 +89,24 @@ ApiService.prototype = {
 		}
 	    });
 
-	return {
+	var self = {
 	    correct:function(cb) {
 		correct_cb = cb;
+		return self;
 	    },
 	    
 	    wrong:function(cb) {
 		wrong_cb = cb;
+		return self;
 	    }
 	}
+
+	return self;
     },
 
     submit:function(flick) {
 	var complete_cb;
-	http.post(API + "api/submit", flick)
+	http.post(API + "api/submit", flick, headers)
 	    .success(function(data) {
 		data = angular.fromJson(data);		
 		if (complete_cb) complete_cb(data);
@@ -107,4 +123,4 @@ ApiService.prototype = {
 
 
 require("./app")
-    .service("Api", ["$http", "$q", "$rootScope", ApiService]);
+    .service("Api", ["$http", "$q", "$location", "$timeout", ApiService]);

@@ -6,7 +6,16 @@ require("./app")
 
     .controller("UserController", ["$scope", "Api", function($scope, api) {
 	api.user().then(function(result) {
-	    $scope.user = result;
+	    $scope.selected.user = result;
+	    if (result && result.passedTutorial) {
+		api.hot().then(function(result) {
+		    $scope.selected.category = result;
+		});
+	    } else {
+		api.tutorial().then(function(data) {
+		    $scope.selected.flick = data;
+		});
+	    }
 	});
     }])
 
@@ -22,29 +31,30 @@ require("./app")
 	$scope.flick = {};
 
 	$scope.submitAnswer = function() {
-	    api.answer($scope.selectedFlick.id, $scope.answer)
+	    api.answer($scope.selected.flick._id, $scope.selected.flick.answer)
 		.correct(function(data) {
-		    $scope.user.passedTutorial = true;
-		    $scope.user.points = data.newPoints; 
-		    modals.show("correct-answer");
+		    $scope.selected.user.passedTutorial = true;
+		    $scope.selected.user.points = data.newPoints; 
+		    $scope.showModal("Correct", data.message);
+		    $scope.selected.flick = false;
 		})
 		.wrong(function(data) {
-		    $scope.user.points = data.newPoints; 
-		    modals.show("wrong-answer");
+		    $scope.selected.user.points = data.newPoints; 
+		    $scope.showModal("Wrong", data.message);
+		    $scope.selected.flick = false;
 		});
 	};
 
 	$scope.submitRiddle = function() {
 	    api.submit($scope.flick)
 		.complete(function(data) {
-		    $scope.user.points = data.newPoints; 
-		    modals.show("flick-submitted");
+		    $scope.selected.user.points = data.newPoints; 
+		    $scope.flick = {};
+		    $scope.selectFlick(data._id);
+		    $scope.showModal("Submitted", data.message);
 		});
 	};
 
-	$scope.cancelAnswer = function() {
-	    $scope.selectedFlick = false;
-	};
 
 
 	$scope.getPoster = function(id) {
@@ -63,52 +73,45 @@ require("./app")
     }])
 
 
-    .controller("GameController", ["$scope", "Api", function($scope, api) {
-	$scope.user = {};
-	$scope.selectedFlick = false;
-	$scope.selectedCategory = false;
+    .controller("GameController", ["$scope", "Api", function($scope, api, $location) {
+	$scope.selected = {};
+	
+	$scope.showModal = function(title, message) {
+	    $scope.selected.modal = {title:title, message:message};
+	}
+
+	$scope.closeModal = function() {
+	    $scope.selected.modal = undefined;
+	}
 
 
 	$scope.selectFlick = function(id) {
 	    api.flick(id).then(function(result) {
-		$scope.selectedFlick = result;
+		$scope.selected.flick = result;
+		$scope.selected.category = false;
 	    });
 	}
 
 	$scope.selectCategory = function(id) {
 	    api.category(id).then(function(result) {
-		$scope.selectedCategory = result;
+		$scope.selected.category = result;
+		$scope.selected.flick = false;
 	    });
 	}
 
-	if ($scope.user && $scope.user.passedTutorial) {
-	    api.hot().then(function(result) {
-		$scope.selectedCategory = result;
-	    });
-	} else {
-	    $scope.selectedFlick = api.tutorial();
-	}
+
+	$scope.cancelFlick = function() {
+	    $scope.selected.flick = false;
+	};
+
 
 	$scope.refreshFlick = function() {
 	};
-    }])
 
-    .controller("AutoCompleteController", 
-		["$scope", "Api", 
-		 function($scope, api) {
-		     $scope.selectResult = function (res) {
-			 $scope.result = res;
-		     };
+	
 
-		     $scope.$watch("title", function() {
-			 if ($scope.title && $scope.title.length > 3) {
-			     api.suggest($scope.title).then(function(result) {
-				 $scope.suggestions = result;
-			     });
-			 }
-		     });
-		     
-		 }]);
 
+
+    }]);
 
 

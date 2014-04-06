@@ -1,0 +1,10 @@
+.flick-play {
+    width: 100%;
+    
+    background: #dfdfdf;
+    border: 1px solid #0f0f0f;
+}
+
+.flick-description {
+    font-size: 30px;
+}

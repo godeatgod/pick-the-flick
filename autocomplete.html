@@ -1,10 +1,11 @@
-<div ng-controller="AutoCompleteController" class="flick-input">
+<div class="flick-input">
   <input type="text" ng-model="title" class="flick-input-text" />
   <div class="flick-suggestion-list">
     <div class="flick-suggestion" ng-show="suggestions" 
-	 ng-repeat="movie in suggestions" ng-click="selectResult(movie.id)">
+	 ng-repeat="movie in suggestions | filter:title" 
+	 ng-click="selectResult(movie)">
       <img src="{{ movie.poster }}" class="flick-suggestion-poster" />
-      <span>{{ movie.title }}</span>
+      <span class="flick-suggestion-name">{{ movie.name }}</span>
     </div>
   </div>
 </div>

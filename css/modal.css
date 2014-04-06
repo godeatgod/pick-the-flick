@@ -1,0 +1,11 @@
+.modal {
+    
+    position:absolute;
+    top:25%;
+    width: 50%;
+    height: 50%;
+    left:25%;
+
+    background: #efefef;
+    border: solid 2px #0f0f0f;
+}
